@@ -24,7 +24,7 @@ def get_table(league="premierleague"):
 
 
 def calculate_possibilities(soup, team_a, team_b):
-    team_a_stats =  []
+    team_a_stats = []
     team_b_stats = []
     for row in soup.find_all('tr', class_=""):
         # if row.find('a', class_="team-name__long").text in [team_a, team_b]:
@@ -172,27 +172,31 @@ with c3:
 
 if st.button('Calculate'):
     try:
-        results, max, HG, AG, max2, HG2, AG2, max3, HG3, AG3, both_team_to_score, team_a_goal_probability, team_b_goal_probability = calculate_possibilities(
-            soup, team_a, team_b)
-        barFig, ax = plt.subplots(1, 2)
-        i = np.arange(0, 6)
-        ax[0].bar(i,  team_b_goal_probability)
-        ax[0].set(title=team_a, xlabel="Goals", ylabel="Probability")
-        ax[1].bar(i, team_a_goal_probability, color="Green")
-        ax[1].set(title=team_b, xlabel="Goals", ylabel="Probability")
-        barFig.subplots_adjust(left=0.125, right=0.9, bottom=0.1,
-                               top=0.9, wspace=0.5, hspace=0.5)
+        if team_a == team_b:
+            st.markdown(
+                "Team A and Team B are identical")
+        else:
+            results, max, HG, AG, max2, HG2, AG2, max3, HG3, AG3, both_team_to_score, team_a_goal_probability, team_b_goal_probability = calculate_possibilities(
+                soup, team_a, team_b)
+            barFig, ax = plt.subplots(1, 2)
+            i = np.arange(0, 6)
+            ax[0].bar(i,  team_b_goal_probability)
+            ax[0].set(title=team_a, xlabel="Goals", ylabel="Probability")
+            ax[1].bar(i, team_a_goal_probability, color="Green")
+            ax[1].set(title=team_b, xlabel="Goals", ylabel="Probability")
+            barFig.subplots_adjust(left=0.125, right=0.9, bottom=0.1,
+                                   top=0.9, wspace=0.5, hspace=0.5)
 
-        # Pie Chart
-        labels = [team_b + " Win", "Draw", team_a + " Win"]
-        pieFig = plt.figure()
-        plt.pie(results, labels=labels, autopct='%1.1f%%')
-        st.markdown(f"""<p>{team_a} {AG} - {HG} {team_b} Possibility: {max}% </p>
-                        <p>{team_a} {AG2} - {HG2} {team_b} Possibility: {max2}%</p>
-                        <p>{team_a} {AG3} - {HG3} {team_b} Possibility: {max3}%</p>
-                        """, unsafe_allow_html=True)
-        st.pyplot(barFig)
-        st.pyplot(pieFig)
+            # Pie Chart
+            labels = [team_b + " Win", "Draw", team_a + " Win"]
+            pieFig = plt.figure()
+            plt.pie(results, labels=labels, autopct='%1.1f%%')
+            st.markdown(f"""<p>{team_a} {AG} - {HG} {team_b} Possibility: {max}% </p>
+                            <p>{team_a} {AG2} - {HG2} {team_b} Possibility: {max2}%</p>
+                            <p>{team_a} {AG3} - {HG3} {team_b} Possibility: {max3}%</p>
+                            """, unsafe_allow_html=True)
+            st.pyplot(barFig)
+            st.pyplot(pieFig)
     except IndexError:
         st.markdown(
             "Sth wrong with the data fetching please try to wait some seconds after changing teams or league")
