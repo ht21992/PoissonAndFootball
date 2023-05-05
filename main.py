@@ -16,19 +16,23 @@ def get_table(league="premierleague"):
         teams = [team.text.replace('\n', '').strip(
         ) for team in soup.find_all('a', class_="team-name__long")]
 
-        # with open("teams.html", "w", encoding='utf-8') as file:
-        #     file.write(str(teams))
+        with open("soup.html", "w", encoding='utf-8') as file:
+            file.write(str(soup))
         return soup, teams
     except ValueError:
         return "No Info"
 
 
 def calculate_possibilities(soup, team_a, team_b):
+
     team_a_stats = []
     team_b_stats = []
+
+    # check tr tag with "" class
     for row in soup.find_all('tr', class_=""):
         # if row.find('a', class_="team-name__long").text in [team_a, team_b]:
         try:
+
             team = str(
                 row.find('a', class_="team-name__long").text).replace('\n', '').strip()
 
@@ -51,6 +55,30 @@ def calculate_possibilities(soup, team_a, team_b):
 
         except AttributeError:
             continue
+
+    # check tr tag with table-row--divider class
+    if not team_a_stats or not team_b_stats:
+        for row in soup.find_all('tr', class_="table-row--divider"):
+            try:
+                team = str(
+                    row.find('a', class_="team-name__long").text).replace('\n', '').strip()
+
+                if team == team_a:
+                    temp_stats = row.find_all('td')
+                    for s in temp_stats[2:10]:
+                        team_a_stats.append(int(s.text))
+
+                elif team == team_b:
+                    temp_stats = row.find_all('td')
+                    for s in temp_stats[2:10]:
+                        team_b_stats.append(int(s.text))
+
+                else:
+                    continue
+
+            except AttributeError:
+                continue
+
     # GP, W, D, L, F, A, GD, Pts
 
     results, max, HG, AG, max2, HG2, AG2, max3, HG3, AG3, both_team_to_score, team_a_goal_probability, team_b_goal_probability = calculation_team_stregnth(
