@@ -24,7 +24,7 @@ def get_table(league="premierleague"):
 
 
 def calculate_possibilities(soup, team_a, team_b):
-    team_a_stats = team_b_stats = ''
+    team_a_stats = team_b_stats = []
     for row in soup.find_all('tr', class_=""):
         # if row.find('a', class_="team-name__long").text in [team_a, team_b]:
         try:
@@ -36,19 +36,22 @@ def calculate_possibilities(soup, team_a, team_b):
 
                 # last_5_games = temp_stats[10].find_all(
                 #     'span', class_="team-result")
-
                 temp_stats = row.find_all('td')
-                team_a_stats = [int(s.text) for s in temp_stats[2:10]]
+                for s in temp_stats[2:10]:
+                    team_a_stats.append(int(s.text))
 
             elif team == team_b:
                 temp_stats = row.find_all('td')
-                team_b_stats = [int(s.text) for s in temp_stats[2:10]]
+                for s in temp_stats[2:10]:
+                    team_b_stats.append(int(s.text))
+
             else:
                 continue
 
         except AttributeError:
             continue
     # GP, W, D, L, F, A, GD, Pts
+
     results, max, HG, AG, max2, HG2, AG2, max3, HG3, AG3, both_team_to_score, team_a_goal_probability, team_b_goal_probability = calculation_team_stregnth(
         team_a_stats[0], team_a_stats[4], team_a_stats[5], team_b_stats[0], team_b_stats[4], team_b_stats[5])
     return results, max, HG, AG, max2, HG2, AG2, max3, HG3, AG3, both_team_to_score, team_a_goal_probability, team_b_goal_probability
