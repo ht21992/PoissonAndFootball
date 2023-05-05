@@ -24,7 +24,8 @@ def get_table(league="premierleague"):
 
 
 def calculate_possibilities(soup, team_a, team_b):
-    team_a_stats = team_b_stats = []
+    team_a_stats =  []
+    team_b_stats = []
     for row in soup.find_all('tr', class_=""):
         # if row.find('a', class_="team-name__long").text in [team_a, team_b]:
         try:
